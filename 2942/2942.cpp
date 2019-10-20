@@ -1,36 +1,28 @@
 #include <iostream>
 #include <vector>
-
-struct VectorPermutation
-{
-    std::vector<int> permutation;
-    int operations;
-};
+#include <algorithm>
 
 int GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
 {
-    std::vector<VectorPermutation> permutations;
-    permutations.push_back({before, 0});
-
-    for (unsigned long long i = 0; i < N * 1e5; i++)
+    int operations = 0;
+    for (int i = 1, j = before.size() - 2; i <= j; i++, j--)
     {
-        VectorPermutation p = permutations[i];
-
-        if (p.permutation == after)
-            return p.operations;
-
-        for (int i = 1; i < p.permutation.size() - 1; i++)
+        if (before[i] != after[i])
         {
-            std::vector<int> new_permutation;
-            new_permutation = p.permutation;
-
-            new_permutation[i] = new_permutation[i - 1] ^ new_permutation[i] ^ new_permutation[i + 1];
-
-            permutations.push_back({new_permutation, p.operations + 1});
+            before[i] = before[i - 1] ^ before[i] ^ before[i + 1];
+            operations++;
+        }
+        if (before[j] != after[j])
+        {
+            before[j] = before[j - 1] ^ before[j] ^ before[j + 1];
+            operations++;
         }
     }
 
-    return -1;
+    if (before == after)
+        return operations;
+    else
+        return -1;
 }
 
 int main()
