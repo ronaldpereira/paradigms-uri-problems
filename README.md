@@ -2,7 +2,7 @@
 
 ## Link to problems
 
-- [ ] [Bubbles and Buckets](https://www.urionlinejudge.com.br/judge/en/problems/view/1088)
+- [x] [Bubbles and Buckets](https://www.urionlinejudge.com.br/judge/en/problems/view/1088)
 
 - [x] [Elementary, my Dear Watson!](https://www.urionlinejudge.com.br/judge/en/problems/view/1382)
 
