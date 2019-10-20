@@ -63,6 +63,10 @@ void GenerateSegments(int N, int K, std::string chain_chars)
 
 int main()
 {
+    // Fast reading from input
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+
     std::string chain_chars;
     int N, K;
 

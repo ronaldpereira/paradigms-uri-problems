@@ -27,6 +27,10 @@ int GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
 
 int main()
 {
+    // Fast reading from input
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+
     int N;
     std::cin >> N;
 
