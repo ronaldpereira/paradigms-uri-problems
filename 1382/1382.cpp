@@ -39,9 +39,9 @@ int main()
 
         for (int j = 0; j < N; j++)
         {
-            int input;
-            std::cin >> input;
-            permutation.push_back(input);
+            int number;
+            std::cin >> number;
+            permutation.push_back(number);
         }
 
         std::cout << OrderAndReturnChanges(permutation) << std::endl;
