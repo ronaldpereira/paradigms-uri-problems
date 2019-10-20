@@ -48,11 +48,7 @@ int main()
 
     int min_operations = GetMinXOROperations(vector_before, vector_after, N);
 
-    if (min_operations >= 0)
-        std::cout << min_operations << std::endl;
-
-    else
-        std::cout << "IMPOSSIBLE" << std::endl;
+    std::cout << (min_operations >= 0 ? std::to_string(min_operations) : "IMPOSSIBLE") << std::endl;
 
     return 0;
 }
