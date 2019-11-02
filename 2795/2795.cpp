@@ -1,23 +1,9 @@
 #include <iostream>
 #include <string>
 #include <array>
+#include <vector>
+#include <limits.h>
 #include <algorithm>
-
-bool IsPalindrome(std::string segment)
-{
-    if (segment.length() == 1)
-        return true;
-
-    else
-    {
-        for (int i = 0, j = segment.length() - 1; i < j; i++, j--)
-        {
-            if (segment[i] != segment[j])
-                return false;
-        }
-        return true;
-    }
-}
 
 int GetChangeCost(char letter_before, char letter_after)
 {
@@ -30,35 +16,42 @@ int GetChangeCost(char letter_before, char letter_after)
     int position_before = iterator_letter_before - alphabet.begin() + 1;
     int position_after = iterator_letter_after - alphabet.begin() + 1;
 
-    if (iterator_letter_before <= iterator_letter_after)
-    {
-        if ((position_after - position_before) <= (position_before - position_after))
-            return position_after - position_before;
-        else
-            return position_before - position_after;
-    }
+    int diff = abs(position_after - position_before);
 
-    // Done a loop over the end of alphabet
-    else
-    {
-        if ((position_after - position_before) <= (position_before - position_after))
-            return alphabet.size() - position_before + position_after;
-
-        else
-            return alphabet.size() - position_after + position_before;
-    }
+    return std::min(diff, 26 - diff);
 }
 
-void GenerateSegments(int N, int K, std::string chain_chars)
+int PalydromeCost(std::string word, int K)
 {
-    int actual_K = 0;
+    int N = word.length();
+    if (N == 1)
+        return 0;
 
-    if (N == K)
-        std::cout << 0 << std::endl;
+    int cost;
+
+    if (K == 1)
+    {
+        cost = 0;
+        for (int i = (N - 1) / 2, j = N - i - 1; i >= 0 && j < N; i--, j++)
+        {
+            if (word[i] != word[j])
+                cost += GetChangeCost(word[i], word[j]);
+        }
+    }
 
     else
     {
+        cost = INT_MAX;
+        for (int i = 1; i < N; i++)
+        {
+            int actual_cost = PalydromeCost(word.substr(0, i), K - 1);
+            actual_cost += PalydromeCost(word.substr(i, word.length() - i), K - 1);
+
+            if (actual_cost < cost)
+                cost = actual_cost;
+        }
     }
+    return cost;
 }
 
 int main()
@@ -67,15 +60,17 @@ int main()
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(NULL);
 
-    std::string chain_chars;
+    std::string word;
     int N, K;
 
-    // std::cin >> N >> K;
-    // std::cin >> chain_chars;
+    std::cin >> N >> K;
+    std::cin >> word;
 
-    // GenerateSegments(N, K, chain_chars);
+    if (N == K)
+        std::cout << 0 << std::endl;
 
-    std::cout << GetChangeCost('a', 'c') << " " << GetChangeCost('a', 'z') << std::endl;
+    else
+        std::cout << PalydromeCost(word, K) << std::endl;
 
     return 0;
 }
