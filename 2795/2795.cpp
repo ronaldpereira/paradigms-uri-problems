@@ -21,7 +21,7 @@ int GetChangeCost(char letter_before, char letter_after)
     return std::min(diff, 26 - diff);
 }
 
-int PalydromeCost(std::string word, int K)
+int PalydromeCost(std::string word, int K, std::vector<std::vector<int>> *dp, int index_begin, int index_end)
 {
     int N = word.length();
     if (N == 1)
@@ -31,21 +31,28 @@ int PalydromeCost(std::string word, int K)
 
     if (K == 1)
     {
-        cost = 0;
-        for (int i = (N - 1) / 2, j = N - i - 1; i >= 0 && j < N; i--, j++)
+        if ((*dp)[index_begin][index_end] >= 0)
+            return (*dp)[index_begin][index_end];
+        else
         {
-            if (word[i] != word[j])
-                cost += GetChangeCost(word[i], word[j]);
+            cost = 0;
+            for (int i = (N - 1) / 2, j = N - i - 1; i >= 0 && j < N; i--, j++)
+            {
+                if (word[i] != word[j])
+                    cost += GetChangeCost(word[i], word[j]);
+            }
+            (*dp)[index_begin][index_end] = cost;
+            return (*dp)[index_begin][index_end];
         }
     }
 
     else
     {
-        cost = INT_MAX;
+        cost = PalydromeCost(word, 1, dp, 0, N - 1);
         for (int i = 1; i < N; i++)
         {
-            int actual_cost = PalydromeCost(word.substr(0, i), K - 1);
-            actual_cost += PalydromeCost(word.substr(i, word.length() - i), K - 1);
+            int actual_cost = PalydromeCost(word.substr(0, i), K - 1, dp, 0, i - 1);
+            actual_cost += PalydromeCost(word.substr(i, N - i), K - 1, dp, i, N - 1);
 
             cost = std::min(cost, actual_cost);
         }
@@ -65,11 +72,16 @@ int main()
     std::cin >> N >> K;
     std::cin >> word;
 
+    std::vector<std::vector<int>> dp(N, std::vector<int>(N));
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+            (i == j) ? dp[i][j] = 0 : dp[i][j] = -1;
+
     if (N == K)
         std::cout << 0 << std::endl;
 
     else
-        std::cout << PalydromeCost(word, K) << std::endl;
+        std::cout << PalydromeCost(word, K, &dp, 0, N - 1) << std::endl;
 
     return 0;
 }
