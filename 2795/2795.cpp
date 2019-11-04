@@ -47,8 +47,7 @@ int PalydromeCost(std::string word, int K)
             int actual_cost = PalydromeCost(word.substr(0, i), K - 1);
             actual_cost += PalydromeCost(word.substr(i, word.length() - i), K - 1);
 
-            if (actual_cost < cost)
-                cost = actual_cost;
+            cost = std::min(cost, actual_cost);
         }
     }
     return cost;
