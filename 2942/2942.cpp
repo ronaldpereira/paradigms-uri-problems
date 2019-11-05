@@ -1,28 +1,47 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <set>
 
-int GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
+long long int GetMinMovements(std::vector<int> origin, std::vector<int> target, int N)
 {
-    int operations = 0;
-    for (int i = 1, j = before.size() - 2; i <= j; i++, j--)
+    long long int movements = 0;
+
+    for (int i = 0; i < N; i++)
     {
-        if (before[i] != after[i])
+        if (origin[i] != target[i])
         {
-            before[i] = before[i - 1] ^ before[i] ^ before[i + 1];
-            operations++;
-        }
-        if (before[j] != after[j])
-        {
-            before[j] = before[j - 1] ^ before[j] ^ before[j + 1];
-            operations++;
+            auto it = std::find(origin.begin(), origin.end(), target[i]);
+            int position = it - origin.begin();
+
+            for (int j = position; j > i; j--)
+            {
+                int tmp = origin[j - 1];
+                origin[j - 1] = origin[j];
+                origin[j] = tmp;
+                movements++;
+            }
         }
     }
+    return movements;
+}
 
-    if (before == after)
-        return operations;
-    else
+long long int GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
+{
+    std::vector<int> xor_before;
+    std::vector<int> xor_after;
+
+    for (int i = 0; i < N; i++)
+        xor_before.push_back(before[i] ^ before[i + 1]);
+
+    for (int i = 0; i < N; i++)
+        xor_after.push_back(after[i] ^ after[i + 1]);
+
+    if (std::multiset<int>(before.begin(), before.end()) == std::multiset<int>(after.begin(), after.end()))
         return -1;
+
+    else
+        return GetMinMovements(xor_after, xor_before, N - 1);
 }
 
 int main()
@@ -50,7 +69,7 @@ int main()
         vector_after.push_back(number);
     }
 
-    int min_operations = GetMinXOROperations(vector_before, vector_after, N);
+    long long int min_operations = GetMinXOROperations(vector_before, vector_after, N);
 
     std::cout << (min_operations >= 0 ? std::to_string(min_operations) : "IMPOSSIBLE") << std::endl;
 

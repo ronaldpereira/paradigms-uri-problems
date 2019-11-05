@@ -1,25 +1,2 @@
-4 2
-aabb
-
----------
-
-4 1
-abxa
-
-4
-
-4 1
-aabz
-
-2
-
-
-4 2
-aabb
-
-0
-
-4 3
-aabe
-
-0
+9 2
+abclmnxyz
