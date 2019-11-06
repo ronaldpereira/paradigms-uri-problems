@@ -32,10 +32,10 @@ long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, i
     std::vector<int> xor_before;
     std::vector<int> xor_after;
 
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < N - 1; i++)
         xor_before.push_back(before[i] ^ before[i + 1]);
 
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < N - 1; i++)
         xor_after.push_back(after[i] ^ after[i + 1]);
 
     if (std::multiset<int>(xor_before.begin(), xor_before.end()) != std::multiset<int>(xor_after.begin(), xor_after.end()))
