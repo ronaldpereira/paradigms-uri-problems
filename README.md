@@ -8,6 +8,6 @@
 
 - [ ] [Palindrome](https://www.urionlinejudge.com.br/judge/en/problems/view/2795)
 
-- [ ] [Cheap Trips](https://www.urionlinejudge.com.br/judge/en/problems/view/2905)
+- [x] [Cheap Trips](https://www.urionlinejudge.com.br/judge/en/problems/view/2905)
 
 - [ ] [Bits Mixing](https://www.urionlinejudge.com.br/judge/en/problems/view/2942)
