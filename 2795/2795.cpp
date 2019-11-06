@@ -1,30 +1,13 @@
 #include <iostream>
-#include <string>
-#include <array>
-#include <vector>
-#include <limits.h>
-#include <algorithm>
 
-std::vector<std::vector<int>> dp;
-std::string word;
-
-int GetChangeCost(char letter_before, char letter_after)
-{
-    int l_b = letter_before - 'a';
-    int l_a = letter_after - 'a';
-
-    int diff = abs(l_b - l_a);
-
-    return std::min(diff, 26 - diff);
-}
+int dp[400][400];
+char word[400];
+int change_cost_dp[26][26];
 
 int PalindromeCost(int K, int index_begin, int index_end)
 {
     if (index_begin == index_end)
         return 0;
-
-    if (index_begin == 6 && index_end == 8 && K == 1)
-        std::cout << "aqui" << std::endl;
 
     if (K == 1)
     {
@@ -34,7 +17,7 @@ int PalindromeCost(int K, int index_begin, int index_end)
             for (int i = index_begin, j = index_end; i < j; i++, j--)
             {
                 if (word[i] != word[j])
-                    cost += GetChangeCost(word[i], word[j]);
+                    cost += change_cost_dp[(int)word[i] - 'a'][(int)word[j] - 'a'];
             }
             dp[index_begin][index_end] = cost;
         }
@@ -46,13 +29,14 @@ int PalindromeCost(int K, int index_begin, int index_end)
         int cost = PalindromeCost(1, index_begin, index_end);
         for (int i = index_begin; i < index_end; i++)
         {
-            int left = PalindromeCost(K - 1, index_begin, i);
+            int left = PalindromeCost(1, index_begin, i);
             int right = PalindromeCost(K - 1, i + 1, index_end);
 
             cost = std::min(cost, left + right);
         }
+        dp[index_begin][index_end] = cost;
 
-        return cost;
+        return dp[index_begin][index_end];
     }
 }
 
@@ -67,10 +51,13 @@ int main()
     std::cin >> N >> K;
     std::cin >> word;
 
-    dp = std::vector<std::vector<int>>(N, std::vector<int>(N));
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             (i == j) ? dp[i][j] = 0 : dp[i][j] = -1;
+
+    for (int i = 0; i < 26; i++)
+        for (int j = 0; j < 26; j++)
+            change_cost_dp[i][j] = std::min(std::abs(j - i), 26 - std::abs(j - i));
 
     if (N == K)
         std::cout << 0 << std::endl;
