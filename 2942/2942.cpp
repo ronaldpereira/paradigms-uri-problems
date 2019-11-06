@@ -11,7 +11,7 @@ long long GetMinMovements(std::vector<int> origin, std::vector<int> target, int 
     {
         if (origin[i] != target[i])
         {
-            auto it = std::find(origin.begin(), origin.end(), target[i]);
+            auto it = std::find(origin.begin() + i, origin.end(), target[i]);
             int position = it - origin.begin();
 
             for (int j = position; j > i; j--)
@@ -38,7 +38,7 @@ long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, i
     for (int i = 0; i < N; i++)
         xor_after.push_back(after[i] ^ after[i + 1]);
 
-    if (std::multiset<int>(before.begin(), before.end()) == std::multiset<int>(after.begin(), after.end()))
+    if (std::multiset<int>(xor_before.begin(), xor_before.end()) != std::multiset<int>(xor_after.begin(), xor_after.end()))
         return -1;
 
     else
