@@ -18,10 +18,13 @@ int GetChangeCost(char letter_before, char letter_after)
     return std::min(diff, 26 - diff);
 }
 
-int PalydromeCost(int K, int index_begin, int index_end)
+int PalindromeCost(int K, int index_begin, int index_end)
 {
     if (index_begin == index_end)
         return 0;
+
+    if (index_begin == 6 && index_end == 8 && K == 1)
+        std::cout << "aqui" << std::endl;
 
     if (K == 1)
     {
@@ -40,15 +43,14 @@ int PalydromeCost(int K, int index_begin, int index_end)
 
     else
     {
-        int cost = PalydromeCost(1, index_begin, index_end);
+        int cost = PalindromeCost(1, index_begin, index_end);
         for (int i = index_begin; i < index_end; i++)
         {
-            dp[index_begin][i] = PalydromeCost(K - 1, index_begin, i);
-            dp[i][index_end] = PalydromeCost(K - 1, i + 1, index_end);
+            int left = PalindromeCost(K - 1, index_begin, i);
+            int right = PalindromeCost(K - 1, i + 1, index_end);
 
-            cost = std::min(cost, dp[index_begin][i] + dp[index_end][i]);
+            cost = std::min(cost, left + right);
         }
-        dp[index_begin][index_end] = cost;
 
         return cost;
     }
@@ -74,7 +76,7 @@ int main()
         std::cout << 0 << std::endl;
 
     else
-        std::cout << PalydromeCost(K, 0, N - 1) << std::endl;
+        std::cout << PalindromeCost(K, 0, N - 1) << std::endl;
 
     return 0;
 }

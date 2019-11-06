@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <set>
 
-long long int GetMinMovements(std::vector<int> origin, std::vector<int> target, int N)
+long long GetMinMovements(std::vector<int> origin, std::vector<int> target, int N)
 {
-    long long int movements = 0;
+    long long movements = 0;
 
     for (int i = 0; i < N; i++)
     {
@@ -23,10 +23,11 @@ long long int GetMinMovements(std::vector<int> origin, std::vector<int> target, 
             }
         }
     }
+
     return movements;
 }
 
-long long int GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
+long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
 {
     std::vector<int> xor_before;
     std::vector<int> xor_after;
@@ -69,7 +70,7 @@ int main()
         vector_after.push_back(number);
     }
 
-    long long int min_operations = GetMinXOROperations(vector_before, vector_after, N);
+    long long min_operations = GetMinXOROperations(vector_before, vector_after, N);
 
     std::cout << (min_operations >= 0 ? std::to_string(min_operations) : "IMPOSSIBLE") << std::endl;
 
