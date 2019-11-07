@@ -3,24 +3,23 @@
 #include <algorithm>
 #include <set>
 
-long long GetMinMovements(std::vector<int> origin, std::vector<int> target, int N)
+long long ShellSortAndReturnMovements(std::vector<int> permutation, int N)
 {
-    long long movements = 0;
+    long long movements = 0LL;
 
-    for (int i = 0; i < N; i++)
+    for (int gap = N / 2; gap > 0; gap /= 2)
     {
-        if (origin[i] != target[i])
+        for (int i = gap; i < N; i++)
         {
-            auto it = std::find(origin.begin() + i, origin.end(), target[i]);
-            int position = it - origin.begin();
+            int temp = permutation[i];
 
-            for (int j = position; j > i; j--)
+            int j;
+            for (j = i; j >= gap && permutation[j - gap] > temp; j -= gap)
             {
-                int tmp = origin[j - 1];
-                origin[j - 1] = origin[j];
-                origin[j] = tmp;
-                movements++;
+                permutation[j] = permutation[j - gap];
+                movements += gap + gap - 1;
             }
+            permutation[j] = temp;
         }
     }
 
@@ -42,7 +41,19 @@ long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, i
         return -1;
 
     else
-        return GetMinMovements(xor_after, xor_before, N - 1);
+    {
+        std::vector<int> xor_indexes(N - 1);
+        for (int i = 0; i < N - 1; i++)
+        {
+            auto it = std::find(xor_after.begin(), xor_after.end(), xor_before[i]);
+            int position = it - xor_after.begin();
+
+            xor_indexes[i] = position;
+            xor_before[i] = -1;
+            xor_after[position] = -1;
+        }
+        return ShellSortAndReturnMovements(xor_indexes, N - 1);
+    }
 }
 
 int main()
