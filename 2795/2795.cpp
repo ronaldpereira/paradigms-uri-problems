@@ -20,21 +20,28 @@ int PalindromeCost(int K, int i)
 {
     if (K == 1 || i == word.length() - 1)
     {
-        dp[i][word.length() - 1] = GetChangeCost(i, word.length() - 1);
-        dp[word.length() - 1][i] = dp[i][word.length() - 1];
+        if (dp[i][word.length() - 1] == -1)
+        {
+            int change_cost;
+            change_cost = GetChangeCost(i, word.length() - 1);
+            dp[i][word.length() - 1] = change_cost;
+        }
+
         return dp[i][word.length() - 1];
     }
 
     else
     {
-        int cost = PalindromeCost(1, 0);
+        int cost = PalindromeCost(1, i);
         for (int j = i; j < word.length() - 1; j++)
         {
-            int left = (dp[i][j] != -1) ? dp[i][j] : GetChangeCost(i, j);
+            int left = GetChangeCost(i, j);
             int right = PalindromeCost(K - 1, j + 1);
 
             cost = std::min(cost, left + right);
         }
+
+        dp[i][word.length() - 1] = cost;
 
         return cost;
     }
