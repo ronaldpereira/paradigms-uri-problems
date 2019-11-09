@@ -3,53 +3,32 @@
 #include <algorithm>
 #include <set>
 
-std::vector<int> auxiliar;
-std::vector<int> xor_indexes;
-
-long long MergeSort(int low, int high)
+long long ShellSortAndReturnMovements(std::vector<long long> permutation, int N)
 {
-    if (low >= high)
-        return 0LL;
+    long long movements = 0LL;
 
-    int mid = (low + high) / 2;
-    long long low_mid = 0LL;
-    long long mid_high = 0LL;
-    low_mid = MergeSort(low, mid);
-    mid_high = MergeSort(mid + 1, high);
-
-    long long inversions = 0LL;
-    int i = low;
-    int j = mid + 1;
-    int k = low;
-
-    while (i <= mid and j <= high)
+    for (int gap = N / 2; gap > 0; gap /= 2)
     {
-        if (xor_indexes[i] <= xor_indexes[j])
-            auxiliar[k++] = xor_indexes[i++];
-
-        else
+        for (int i = gap; i < N; i++)
         {
-            auxiliar[k++] = xor_indexes[j++];
-            inversions += std::abs(mid + 1 - i);
+            int temp = permutation[i];
+
+            int j;
+            for (j = i; j >= gap && permutation[j - gap] > temp; j -= gap)
+            {
+                permutation[j] = permutation[j - gap];
+                movements += gap + gap - 1;
+            }
+            permutation[j] = temp;
         }
     }
-
-    while (i <= mid)
-        auxiliar[k++] = xor_indexes[i++];
-
-    while (j <= high)
-        auxiliar[k++] = xor_indexes[j++];
-
-    for (int i = low; i <= high; i++)
-        xor_indexes[i] = auxiliar[i];
-
-    return inversions + low_mid + mid_high;
+    return movements;
 }
 
-long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
+long long GetMinXOROperations(std::vector<long long> before, std::vector<long long> after, int N)
 {
-    std::vector<int> xor_before;
-    std::vector<int> xor_after;
+    std::vector<long long> xor_before;
+    std::vector<long long> xor_after;
 
     for (int i = 0; i < N - 1; i++)
         xor_before.push_back(before[i] ^ before[i + 1]);
@@ -65,8 +44,7 @@ long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, i
 
     else
     {
-        xor_indexes = std::vector<int>(N - 1);
-        auxiliar = std::vector<int>(N - 1);
+        std::vector<long long> xor_indexes(N - 1);
         for (int i = 0; i < N - 1; i++)
         {
             auto it = std::find(xor_before.begin(), xor_before.end(), xor_after[i]);
@@ -76,7 +54,7 @@ long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, i
             xor_after[i] = -1;
             xor_before[position] = -1;
         }
-        return MergeSort(0, N - 2);
+        return ShellSortAndReturnMovements(xor_indexes, N - 1);
     }
 }
 
@@ -89,7 +67,7 @@ int main()
     int N;
     std::cin >> N;
 
-    std::vector<int> vector_before(N), vector_after(N);
+    std::vector<long long> vector_before(N), vector_after(N);
 
     for (int i = 0; i < N; i++)
         std::cin >> vector_before[i];
