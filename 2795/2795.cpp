@@ -18,16 +18,12 @@ int GetChangeCost(int index_begin, int index_end)
 
 int PalindromeCost(int K, int i)
 {
-    if (K == 1 || i == word.length() - 1)
+    if (K == 1)
     {
-        if (dp[i][word.length() - 1] == -1)
-        {
-            int change_cost;
-            change_cost = GetChangeCost(i, word.length() - 1);
-            dp[i][word.length() - 1] = change_cost;
-        }
+        if (dp[i][K] == -1)
+            dp[i][K] = GetChangeCost(i, word.length() - 1);
 
-        return dp[i][word.length() - 1];
+        return dp[i][K];
     }
 
     else
@@ -36,14 +32,13 @@ int PalindromeCost(int K, int i)
         for (int j = i; j < word.length() - 1; j++)
         {
             int left = GetChangeCost(i, j);
-            int right = PalindromeCost(K - 1, j + 1);
-
+            int right = (dp[j + 1][K - 1] == -1) ? PalindromeCost(K - 1, j + 1) : dp[j + 1][K - 1];
+            dp[j + 1][K - 1] = right;
             cost = std::min(cost, left + right);
         }
+        dp[i][K] = cost;
 
-        dp[i][word.length() - 1] = cost;
-
-        return cost;
+        return dp[i][K];
     }
 }
 
@@ -62,16 +57,12 @@ int main()
         for (int j = 0; j < 26; j++)
             change_cost_dp[i][j] = std::min(std::abs(j - i), 26 - std::abs(j - i));
 
-    dp = std::vector<std::vector<int>>(N, std::vector<int>(N));
+    dp = std::vector<std::vector<int>>((N), std::vector<int>(K + 1));
     for (int i = 0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            dp[i][j] = (i == j) ? 0 : -1;
+        for (int j = 0; j <= K; j++)
+            dp[i][j] = -1;
 
-    if (N == K)
-        std::cout << 0 << std::endl;
-
-    else
-        std::cout << PalindromeCost(K, 0) << std::endl;
+    std::cout << PalindromeCost(K, 0) << std::endl;
 
     return 0;
 }
