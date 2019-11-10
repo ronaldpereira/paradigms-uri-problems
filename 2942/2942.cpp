@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <set>
+#include <unordered_map>
 
 long long Merge(std::vector<int> &xor_indexes, std::vector<int> &tmp, int left, int mid, int right)
 {
@@ -57,16 +58,21 @@ long long GetMinInversions(std::vector<int> &xor_indexes, int N)
     return MergeSort(xor_indexes, tmp, 0, N - 1);
 }
 
-long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
+long long GetMinXOROperations(std::vector<int> &before, std::vector<int> &after, int N)
 {
     std::vector<int> xor_before;
     std::vector<int> xor_after;
+    std::unordered_map<int, std::vector<int>> xor_after_reference;
 
     for (int i = 0; i < N - 1; i++)
         xor_before.push_back(before[i] ^ before[i + 1]);
 
     for (int i = 0; i < N - 1; i++)
-        xor_after.push_back(after[i] ^ after[i + 1]);
+    {
+        int xor_bitwise_value = after[i] ^ after[i + 1];
+        xor_after.push_back(xor_bitwise_value);
+        xor_after_reference[xor_bitwise_value].push_back(i);
+    }
 
     if (!(before[0] == after[0] && before[N - 1] == after[N - 1]))
         return -1LL;
@@ -74,17 +80,16 @@ long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, i
     else if (std::multiset<int>(xor_before.begin(), xor_before.end()) != std::multiset<int>(xor_after.begin(), xor_after.end()))
         return -1LL;
 
+    else if (xor_before == xor_after)
+        return 0LL;
+
     else
     {
         std::vector<int> xor_indexes(N - 1);
         for (int i = 0; i < N - 1; i++)
         {
-            auto it = std::find(xor_before.begin(), xor_before.end(), xor_after[i]);
-            int position = it - xor_before.begin();
-
-            xor_indexes[position] = i;
-            xor_after[i] = -1;
-            xor_before[position] = -1;
+            xor_indexes[i] = xor_after_reference[xor_before[i]].front();
+            xor_after_reference[xor_before[i]].erase(xor_after_reference[xor_before[i]].begin());
         }
         return GetMinInversions(xor_indexes, N - 1);
     }
