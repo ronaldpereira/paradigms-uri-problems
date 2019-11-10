@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <limits.h>
 
 std::string word;
 std::vector<std::vector<int>> dp;
