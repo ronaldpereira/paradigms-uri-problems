@@ -10,4 +10,4 @@
 
 - [x] [Cheap Trips](https://www.urionlinejudge.com.br/judge/en/problems/view/2905)
 
-- [ ] [Bits Mixing](https://www.urionlinejudge.com.br/judge/en/problems/view/2942)
+- [x] [Bits Mixing](https://www.urionlinejudge.com.br/judge/en/problems/view/2942)
