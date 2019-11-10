@@ -3,32 +3,64 @@
 #include <algorithm>
 #include <set>
 
-long long ShellSortAndReturnMovements(std::vector<long long> permutation, int N)
+long long Merge(std::vector<int> &xor_indexes, std::vector<int> &tmp, int left, int mid, int right)
 {
-    long long movements = 0LL;
+    long long inversions = 0LL;
 
-    for (int gap = N / 2; gap > 0; gap /= 2)
+    int i = left;
+    int j = mid;
+    int k = left;
+
+    while (i <= mid - 1 && j <= right)
     {
-        for (int i = gap; i < N; i++)
-        {
-            int temp = permutation[i];
+        if (xor_indexes[i] <= xor_indexes[j])
+            tmp[k++] = xor_indexes[i++];
 
-            int j;
-            for (j = i; j >= gap && permutation[j - gap] > temp; j -= gap)
-            {
-                permutation[j] = permutation[j - gap];
-                movements += gap + gap - 1;
-            }
-            permutation[j] = temp;
+        else
+        {
+            tmp[k++] = xor_indexes[j++];
+            inversions += mid - i;
         }
     }
-    return movements;
+
+    while (i <= mid - 1)
+        tmp[k++] = xor_indexes[i++];
+
+    while (j <= right)
+        tmp[k++] = xor_indexes[j++];
+
+    for (i = left; i <= right; i++)
+        xor_indexes[i] = tmp[i];
+
+    return inversions;
 }
 
-long long GetMinXOROperations(std::vector<long long> before, std::vector<long long> after, int N)
+long long MergeSort(std::vector<int> &xor_indexes, std::vector<int> &tmp, int left, int right)
 {
-    std::vector<long long> xor_before;
-    std::vector<long long> xor_after;
+    long long inversions = 0LL;
+    if (right > left)
+    {
+        int mid = (left + right) / 2;
+
+        inversions = MergeSort(xor_indexes, tmp, left, mid);
+        inversions += MergeSort(xor_indexes, tmp, mid + 1, right);
+
+        inversions += Merge(xor_indexes, tmp, left, mid + 1, right);
+    }
+
+    return inversions;
+}
+
+long long GetMinInversions(std::vector<int> &xor_indexes, int N)
+{
+    std::vector<int> tmp(N);
+    return MergeSort(xor_indexes, tmp, 0, N - 1);
+}
+
+long long GetMinXOROperations(std::vector<int> before, std::vector<int> after, int N)
+{
+    std::vector<int> xor_before;
+    std::vector<int> xor_after;
 
     for (int i = 0; i < N - 1; i++)
         xor_before.push_back(before[i] ^ before[i + 1]);
@@ -36,15 +68,15 @@ long long GetMinXOROperations(std::vector<long long> before, std::vector<long lo
     for (int i = 0; i < N - 1; i++)
         xor_after.push_back(after[i] ^ after[i + 1]);
 
-    if (before[0] != after[0] || before[N - 1] != after[N - 1])
-        return -1;
+    if (!(before[0] == after[0] && before[N - 1] == after[N - 1]))
+        return -1LL;
 
     else if (std::multiset<int>(xor_before.begin(), xor_before.end()) != std::multiset<int>(xor_after.begin(), xor_after.end()))
-        return -1;
+        return -1LL;
 
     else
     {
-        std::vector<long long> xor_indexes(N - 1);
+        std::vector<int> xor_indexes(N - 1);
         for (int i = 0; i < N - 1; i++)
         {
             auto it = std::find(xor_before.begin(), xor_before.end(), xor_after[i]);
@@ -54,7 +86,7 @@ long long GetMinXOROperations(std::vector<long long> before, std::vector<long lo
             xor_after[i] = -1;
             xor_before[position] = -1;
         }
-        return ShellSortAndReturnMovements(xor_indexes, N - 1);
+        return GetMinInversions(xor_indexes, N - 1);
     }
 }
 
@@ -67,7 +99,7 @@ int main()
     int N;
     std::cin >> N;
 
-    std::vector<long long> vector_before(N), vector_after(N);
+    std::vector<int> vector_before(N), vector_after(N);
 
     for (int i = 0; i < N; i++)
         std::cin >> vector_before[i];
