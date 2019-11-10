@@ -1,26 +1,63 @@
 #include <iostream>
 #include <vector>
 
-int ShellSortAndReturnMovements(std::vector<int> permutation, int N)
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+
+int Merge(std::vector<int> &xor_indexes, std::vector<int> &tmp, int left, int mid, int right)
 {
-    int movements = 0;
+    int inversions = 0;
 
-    for (int gap = N / 2; gap > 0; gap /= 2)
+    int i = left;
+    int j = mid;
+    int k = left;
+
+    while (i <= mid - 1 && j <= right)
     {
-        for (int i = gap; i < N; i++)
-        {
-            int temp = permutation[i];
+        if (xor_indexes[i] <= xor_indexes[j])
+            tmp[k++] = xor_indexes[i++];
 
-            int j;
-            for (j = i; j >= gap && permutation[j - gap] > temp; j -= gap)
-            {
-                permutation[j] = permutation[j - gap];
-                movements += gap + gap - 1;
-            }
-            permutation[j] = temp;
+        else
+        {
+            tmp[k++] = xor_indexes[j++];
+            inversions += 1 * (mid - i);
         }
     }
-    return movements;
+
+    while (i <= mid - 1)
+        tmp[k++] = xor_indexes[i++];
+
+    while (j <= right)
+        tmp[k++] = xor_indexes[j++];
+
+    for (i = left; i <= right; i++)
+        xor_indexes[i] = tmp[i];
+
+    return inversions;
+}
+
+int MergeSort(std::vector<int> &xor_indexes, std::vector<int> &tmp, int left, int right)
+{
+    int inversions = 0;
+    if (right > left)
+    {
+        int mid = (left + right) / 2;
+
+        inversions = MergeSort(xor_indexes, tmp, left, mid);
+        inversions += MergeSort(xor_indexes, tmp, mid + 1, right);
+
+        inversions += Merge(xor_indexes, tmp, left, mid + 1, right);
+    }
+
+    return inversions;
+}
+
+int GetMinInversions(std::vector<int> &xor_indexes, int N)
+{
+    std::vector<int> tmp(N);
+    return MergeSort(xor_indexes, tmp, 0, N - 1);
 }
 
 int main()
@@ -45,7 +82,7 @@ int main()
             permutation.push_back(number);
         }
 
-        std::cout << (ShellSortAndReturnMovements(permutation, N) % 2 == 0 ? "Carlos" : "Marcelo") << std::endl;
+        std::cout << (GetMinInversions(permutation, N) % 2 == 0 ? "Carlos" : "Marcelo") << std::endl;
     }
     return 0;
 }
